@@ -1,6 +1,7 @@
 #How to run script,
 #pwd:/Users/joeriksson/IdeaProjects/hemnet/sold_items/sold_items
 #run: python analytics.py
+# Script to flatten the json file in order to convert to pandas.
 
 import pandas as pd
 import json
