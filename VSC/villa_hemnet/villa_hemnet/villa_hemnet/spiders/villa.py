@@ -2,7 +2,7 @@
 
 #How to run script,
 #pwd:/Users/joeriksson/IdeaProjects/hemnet/sold_items/sold_items/spiders
-#run: scrapy crawl sold_items
+#run: scrapy crawl villa
 
 import scrapy
 from pydispatch import dispatcher
@@ -13,13 +13,16 @@ import re
 import scrapy
 
 
-class villa_hemnetSpider(scrapy.Spider):
+class villa_hemnetSpider(scrapy.Spider): 
     name = "villa"
     #Hous price in avesta 
     #start_urls = ["https://www.hemnet.se/salda/bostader?location_ids%5B%5D=17874&item_types%5B%5D=villa&item_types%5B%5D=radhus"]
     
-    #house prices in stockholm
+    #house prices in
     start_urls =["https://www.hemnet.se/salda/bostader?location_ids%5B%5D=925970&location_ids%5B%5D=925968&living_area_min=45&living_area_max=100&sold_age=3m"] 
+    
+    #Test 15 apparmenets in fredhell 
+    #start_urls = ['https://www.hemnet.se/salda/bostader?location_ids%5B%5D=473359&living_area_max=30&sold_age=3m']
     counter = 0
     results = {}
 
@@ -45,11 +48,16 @@ class villa_hemnetSpider(scrapy.Spider):
         streetName = response.xpath('//h1//text()').extract()
         streetName = streetName[2:]
         streetName = ''.join(streetName)
-        #print(streetName)
+        streetName = streetName.strip()
+        print(streetName)
 
         #summary_info = summary_info[0:1]
         sold_date = response.xpath('//p//text()').extract()[6]
-        #print(sold_date)
+        sold_date = sold_date.replace(u"\n", "")
+        sold_date = sold_date.replace(u'\xa0', '')
+        sold_date = sold_date.replace(u"\t", "")
+        sold_date = sold_date.strip()
+        print(sold_date)
         summary_info = response.xpath('//p//text()').extract()
         summary_info = summary_info[2:8]
         summary_info = ''.join(summary_info)
@@ -63,15 +71,18 @@ class villa_hemnetSpider(scrapy.Spider):
 
         area=re.findall('(?<=-)  [^<=,]*', summary_info)
         area = ''.join(area)
+        area = area.strip()
         print('NEW',area)
         
         #print("TESTAR", summary_info)
         brok_name = (response.css('div.broker-card__info > p.broker-card__text > strong::text').extract_first())
         broaker_company = (response.css('div.broker-card__info > a.hcl-link::text ').extract_first())
+        broaker_company = broaker_company.strip()
         print("broaker", broaker_company)
         price=(response.css("div.sold-property__price > span.sold-property__price-value::text").get())
         price= price.replace("kr","")
         price= price.replace(u"\xa0","")
+        price = price.strip()
         
         print('Price', price)
         
@@ -86,6 +97,7 @@ class villa_hemnetSpider(scrapy.Spider):
             label = label.replace(u"\n", "")
             label = label.replace(u"\t", "")
             label = label.replace(u'\xa0', '')
+            label = label.strip()
             # Exctrakt the value from first boxj
             value=info.css('dd.sold-property__attribute-value::text').get()
             value = value.replace(u"\n", "")
@@ -96,6 +108,7 @@ class villa_hemnetSpider(scrapy.Spider):
             value = value.replace('kr/m²', '')
             value = value.replace('m²', '')
             value = value.replace('kr', '')
+            value = value.strip()
             datadict_first[label]=value
         print(datadict_first)
 
@@ -108,8 +121,10 @@ class villa_hemnetSpider(scrapy.Spider):
              label = label.replace(u"\n", "")
              label = label.replace(u"\t", "")
              label = label.replace(u'\xa0', '')
+             label = label.strip()
              # Exctrakt the value from first boxj
              value=info.css('dd.sold-property__attribute-value::text').get()
+             label = label.replace(u'\xa0', '')
              value = value.replace(u"\n", "")
              value = value.replace(u"\t", "")
              value = value.replace(u'\xa0', '')
@@ -118,6 +133,7 @@ class villa_hemnetSpider(scrapy.Spider):
              value = value.replace('kr/m²', '')
              value = value.replace('m²', '')
              value = value.replace('kr', '')
+             value = value.strip()
              second_dict[label]=value
         print(second_dict)
 
