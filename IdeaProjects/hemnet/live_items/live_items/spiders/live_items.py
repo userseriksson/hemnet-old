@@ -38,8 +38,6 @@ class QuotesSpider(scrapy.Spider):
             time.sleep(2)
             yield response.follow(nextPage, callback=self.parse)
 
-
-
     def parseAd(self, response):
         hemnetUrl = response.request.url
         address = response.css("div.property-info__primary-container > div.property-info__address-container > div.property-address > h1.qa-property-heading::text").get()
@@ -100,8 +98,6 @@ class QuotesSpider(scrapy.Spider):
                 "description": showingDesc
             }
             i = i + 1
-
-
 
         self.results[self.globalIndex] = {
             "hemnetUrl": hemnetUrl,
