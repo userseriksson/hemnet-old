@@ -56,6 +56,23 @@ def mdy_to_ymd(df):
     df['newDate'] = pd.to_datetime(df['newDate'])
 
     return df
+
+def mape(y_true, y_pred): 
+    """
+    Calculate Mean Absolute Prediction Error given y_true and y_pred
+    """
+    y_true, y_pred = np.array(y_true), np.array(y_pred)
+    return np.mean(np.abs((y_true - y_pred) / (y_true + 1.0))) * 100
+
+
+def rmse(y_true, y_pred):
+    """
+    Calculate the Root Mean Squared Error for y_true and y_pred
+    """
+    err = None
+    if not (y_true.empty or y_pred.empty):
+        err = sqrt(mean_squared_error(y_true.to_numpy(), y_pred.to_numpy()))
+    return err
     
     
 def cyclical_transform_week(df):
